@@ -24,14 +24,14 @@ class NeuralAccumulatorCell(nn.Module):
 
         self.W_hat = Parameter(torch.Tensor(out_dim, in_dim))
         self.M_hat = Parameter(torch.Tensor(out_dim, in_dim))
-        self.W = Parameter(F.tanh(self.W_hat) * F.sigmoid(self.M_hat))
         self.register_parameter('bias', None)
 
         init.kaiming_uniform_(self.W_hat, a=math.sqrt(5))
         init.kaiming_uniform_(self.M_hat, a=math.sqrt(5))
 
-    def forward(self, input):
-        return F.linear(input, self.W, self.bias)
+    def forward(self, input):        
+        W = F.tanh(self.W_hat) * F.sigmoid(self.M_hat)
+        return F.linear(input, W, self.bias)
 
     def extra_repr(self):
         return 'in_dim={}, out_dim={}'.format(
