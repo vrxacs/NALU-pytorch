@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from models import MLP, NAC, NALU
+from models import MLP, NAC, NALU, FauxNALU
 
 NORMALIZE = True
 NUM_LAYERS = 2
@@ -94,6 +94,12 @@ def main():
             hidden_dim=HIDDEN_DIM,
             out_dim=1
         ),
+        FauxNALU(
+            num_layers=NUM_LAYERS,
+            in_dim=2,
+            hidden_dim=HIDDEN_DIM,
+            out_dim=1
+        ),
     ]
 
     results = {}
@@ -127,14 +133,14 @@ def main():
             results[fn_str].append(mse)
 
     with open(save_dir + "interpolation.txt", "w") as f:
-        f.write("Relu6\tNone\tNAC\tNALU\n")
+        f.write("Relu6\tNone\tNAC\tNALU\tfauxNALU\n")
         for k, v in results.items():
             rand = results[k][0]
             mses = [100.0*x/rand for x in results[k][1:]]
             if NORMALIZE:
-                f.write("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(*mses))
+                f.write("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(*mses))
             else:
-                f.write("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(*results[k][1:]))
+                f.write("{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\t{:.3f}\n".format(*results[k][1:]))
 
 
 if __name__ == '__main__':
